@@ -26,6 +26,9 @@ export const protect = async (req, res, next) => {
     if (!user) {
       return errorResponse(res, "User associated with this token no longer exists.", 401);
     }
+    if (decode.sessionId !==user.activeSessionId){
+      return errorResponse(res,"SESSION_TAKEOVER: Your session was terminated because your account was logged in from another device., 401");
+    }
 
     if (!user.isActive) {
       return errorResponse(res, "User account is deactivated.", 403);

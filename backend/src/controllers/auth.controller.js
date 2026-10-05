@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import User from "../models/User.js";
 import Student from "../models/Student.js";
 import Teacher from "../models/Teacher.js";
@@ -165,7 +166,12 @@ export const register = async (req, res, next) => {
       });
     }
 
-    const token = generateToken(user._id, user.role);
+    const sessionId = crypto.randomUUID();
+
+    user.activeSessionId = sessionId;
+    await user.save()
+
+    const token = generateToken(user._id, user.role,sessionId);
     setAuthCookie(res, token);
 
     return successResponse(
@@ -216,8 +222,11 @@ export const login = async (req, res, next) => {
       return errorResponse(res, "Your account has been deactivated. Please contact support.", 403);
     }
 
-    const token = generateToken(user._id, user.role);
-    setAuthCookie(res, token);
+    const sessionId = crypto.randomUUID();
+    user.activeSessionId = sessionId;
+    await user.save();
+    const token = generateToken (user._id,user._role,sessionId);
+    setAuthCookie(res,token);
 
     return successResponse(
       res,

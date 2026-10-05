@@ -1,11 +1,11 @@
 import jwt from "jsonwebtoken";
 
-export const generateToken = (userId, role) => {
+export const generateToken = (userId, role, sessionId) => {
   const secret = process.env.JWT_SECRET || "talenthunt_jwt_secret_fallback_key";
   const expiresIn = process.env.JWT_EXPIRES_IN || "7d";
 
   return jwt.sign(
-    { userId, role },
+    { userId, role, sessionId },
     secret,
     { expiresIn }
   );

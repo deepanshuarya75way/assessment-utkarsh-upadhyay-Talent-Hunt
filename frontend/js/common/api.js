@@ -49,7 +49,12 @@ async function apiRequest(endpoint, options = {}) {
       const error = new Error(errorMessage);
       error.status = response.status;
       error.data = data;
-      throw error;
+      if(
+        response.status == 401 && errorMessage.includes("SESSION_TAKEOVER")){
+          error.isSessionTakeover = true;
+        }
+        throw error;
+      
     }
 
     return data;
@@ -99,6 +104,12 @@ const auth = {
       if (err.status === 401) {
         localStorage.removeItem("talentHuntToken");
         localStorage.removeItem("talentHuntUser");
+        sessionStorage.removeItem("talentHuntToken");
+
+          if (err.isSessionTakeover){
+            alert("Device Takeover Alert \n\n "+ "Your account logged in another device"+"For security this session has been terminated");
+            window.location.href = "../auth/login.html";
+          }
       }
       throw err;
     }

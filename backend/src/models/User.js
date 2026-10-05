@@ -40,6 +40,10 @@ const userSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true
+    },
+    activeSessionId:{
+      type: String,
+      default:null
     }
   },
   {
