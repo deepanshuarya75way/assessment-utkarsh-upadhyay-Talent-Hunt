@@ -23,6 +23,7 @@ export const register = async (req, res, next) => {
       role,
       studentType,
       phone,
+      deviceName,
       // Student specific
       institution,
       course,
@@ -171,9 +172,17 @@ export const register = async (req, res, next) => {
     user.activeSessionId = sessionId;
     await user.save()
 
-    const token = generateToken(user._id, user.role,sessionId);
-    setAuthCookie(res, token);
+    const sessionId = crypto.randomUUID();
+    user.activeSessionId = sessionId;
+    user.activeDeviceName = deviceName || "Unknown Device" ;
+    user.activeSessionAt = new Date();
 
+    await user.save();
+
+    const token = generateToken(user._id,user._role,sessionId);
+    setAuthCookie(res, Token);
+
+    
     return successResponse(
       res,
       "Registration successful",
@@ -202,7 +211,7 @@ export const register = async (req, res, next) => {
  */
 export const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, deviceName } = req.body;
 
     if (!email || !password) {
       return errorResponse(res, "Please provide email and password.", 400);
@@ -225,8 +234,16 @@ export const login = async (req, res, next) => {
     const sessionId = crypto.randomUUID();
     user.activeSessionId = sessionId;
     await user.save();
-    const token = generateToken (user._id,user._role,sessionId);
-    setAuthCookie(res,token);
+    const sessionId = crypto.randomUUId();
+
+    user.activeSessionId = sessionId;
+    user.activeDeviceName = deviceName || "Unknown Device";
+    user.activeSessionAt = new Date();
+
+    await user.save();
+
+    const token = generateToken(user._id, user._role, sessionId);
+    setAuthCookie(res, token);
 
     return successResponse(
       res,

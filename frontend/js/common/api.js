@@ -4,7 +4,34 @@
  */
 
 const API_BASE_URL = window.TALENTHUNT_API_URL || "http://localhost:5000/api";
+function getDeviceName(){
+  const ua = navigator.userAgent;
+  let browser = "Unknown Browser";
 
+  if(ua.includes("Edg/")){
+    browser = "Microsoft Edge";
+  } else if(ua.includes("Chrome/")){
+    browser = "Google Chrome";
+  } else if(ua.includes("Firefox/")){
+    browser = "Firefox";
+  } else if (ua.includes("Safari"/)){
+    browser = "Safari";
+  }
+  let os = "Unknown OS";
+
+  if(ua.includes("Windows")){
+    os = "Android";
+  } else if (ua.includes("Android")){
+    os = "Android";
+  } else if  (ua.includes("iPhone")){
+    os = "iPhone";
+  }else if (ua.includes("Mac OS")){
+    os = "macOS";
+  } else if (ua.includes("Linux")){
+    os = "Linux";
+  }
+  return '${browser} on ${os}';
+}
 /**
  * Core HTTP Request Wrapper
  */
@@ -71,7 +98,7 @@ const auth = {
   async register(userData) {
     const response = await apiRequest("/auth/register", {
       method: "POST",
-      body: JSON.stringify(userData)
+      body: JSON.stringify({userData)
     });
     if (response.data && response.data.token) {
       localStorage.setItem("talentHuntToken", response.data.token);
@@ -83,7 +110,7 @@ const auth = {
   async login(email, password) {
     const response = await apiRequest("/auth/login", {
       method: "POST",
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password, deviceName:getDeviceName() })
     });
     if (response.data && response.data.token) {
       localStorage.setItem("talentHuntToken", response.data.token);

@@ -41,11 +41,20 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true
     },
-    activeSessionId:{
+    activeSessionId: {
       type: String,
-      default:null
+      default: null
+    },
+    activeDeviceName: {
+      type: String,
+      default: null
+    },
+    activeSessionAt: {
+      type: Date,
+      default: null
     }
   },
+
   {
     timestamps: true
   }

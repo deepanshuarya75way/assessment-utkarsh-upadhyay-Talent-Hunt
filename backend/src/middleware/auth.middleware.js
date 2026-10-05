@@ -25,6 +25,15 @@ export const protect = async (req, res, next) => {
     const user = await User.findById(decoded.userId).select("-password");
     if (!user) {
       return errorResponse(res, "User associated with this token no longer exists.", 401);
+      if(
+        !decoded.sessionId || decoded.sessionId !== user.activeSessionId){
+          return errorResponse(res, "SESSION_TAKEOVER", 401,[{
+            code:"SESSION_TAKEOVER",
+            message:"Your account was logged in from another device.",
+            newDevice:user.activeDeviceName||"Unknown Device"
+          }]);
+        }
+      
     }
     if (decode.sessionId !==user.activeSessionId){
       return errorResponse(res,"SESSION_TAKEOVER: Your session was terminated because your account was logged in from another device., 401");
